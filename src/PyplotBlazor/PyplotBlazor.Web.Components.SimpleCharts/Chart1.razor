@@ -1,0 +1,38 @@
+﻿@using Plotly.Blazor.Traces.ScatterLib
+
+<script src="_content/Plotly.Blazor/plotly-latest.min.js" type="text/javascript"></script>
+<script src="_content/Plotly.Blazor/plotly-interop.js" type="text/javascript"></script>
+
+<div class="my-component">
+    This component is defined in the <strong>PyplotBlazor.Web.Components.SimpleCharts</strong> library.
+</div>
+
+<PlotlyChart @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart"/>
+
+
+@code {
+    PlotlyChart chart;
+    Config config = new Config();
+    Layout layout = new Layout();
+    // Using of the interface IList is important for the event callback!
+    IList<ITrace> data = new List<ITrace>
+    {
+        new Scatter
+        {
+            Name = "ScatterTrace",
+            Mode = ModeFlag.Lines | ModeFlag.Markers,
+            X = new List<object>{1,2,3},
+            Y = new List<object>{1,2,3}
+        }
+    };
+
+    private async Task AddData(int count = 100)
+    {
+        if (!(chart.Data.FirstOrDefault() is Scatter scatter)) return;
+        var (x, y) = (scatter.X.Count + 1, scatter.X.Count + 1 + count);
+
+        await chart.ExtendTrace(x, y, data.IndexOf(scatter));
+    }
+}
+
+
